@@ -54,6 +54,17 @@ const mockModels: ModelData[] = [
     provider: "Google",
     createdAt: 1680000000,
   },
+  {
+    id: "meta/llama-3.1",
+    name: "Meta: Llama 3.1",
+    contextLength: 128000,
+    inputPrice: 0.1,
+    outputPrice: 0.4,
+    inputModalities: ["text"],
+    outputModalities: ["text"],
+    provider: "Meta",
+    createdAt: 1695000000,
+  },
 ];
 
 export const Default: Story = {
@@ -139,5 +150,79 @@ export const ToggleAddRemove: Story = {
     await userEvent.click(plusButtons[0]);
     const emptyMessage = canvas.getByText(/選択されたモデルはありません/i);
     expect(emptyMessage).toBeInTheDocument();
+  },
+};
+
+export const SortInputCacheReadPrice: Story = {
+  args: {
+    models: mockModels,
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+  },
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+    const sortHeader = canvas.getByRole("columnheader", {
+      name: /Input Cache Read/,
+    });
+    await userEvent.click(sortHeader);
+    const firstRow = canvas.getAllByRole("row")[1];
+    const cells = within(firstRow).getAllByRole("cell");
+    expect(cells[0].textContent).toContain("Google: Gemini 2.0 Flash");
+    const lastRow = canvas.getAllByRole("row")[4];
+    const lastCells = within(lastRow).getAllByRole("cell");
+    expect(lastCells[0].textContent).toContain("Meta: Llama 3.1");
+  },
+};
+
+export const SortInputCacheWritePrice: Story = {
+  args: {
+    models: mockModels,
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+  },
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+    const sortHeader = canvas.getByRole("columnheader", {
+      name: /Input Cache Write/,
+    });
+    await userEvent.click(sortHeader);
+    const firstRow = canvas.getAllByRole("row")[1];
+    const cells = within(firstRow).getAllByRole("cell");
+    expect(cells[0].textContent).toContain("Google: Gemini 2.0 Flash");
+    const lastRow = canvas.getAllByRole("row")[4];
+    const lastCells = within(lastRow).getAllByRole("cell");
+    expect(lastCells[0].textContent).toContain("Meta: Llama 3.1");
+  },
+};
+
+export const SortInputModalities: Story = {
+  args: {
+    models: mockModels,
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+  },
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+    const sortHeader = canvas.getByRole("columnheader", {
+      name: /入力モダリティ/,
+    });
+    await userEvent.click(sortHeader);
+    const firstRow = canvas.getAllByRole("row")[1];
+    const cells = within(firstRow).getAllByRole("cell");
+    expect(cells[0].textContent).toContain("OpenAI: GPT-5.4 Pro");
+  },
+};
+
+export const SortOutputModalities: Story = {
+  args: {
+    models: mockModels,
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+  },
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+    const sortHeader = canvas.getByRole("columnheader", {
+      name: /出力モダリティ/,
+    });
+    await userEvent.click(sortHeader);
+    const firstRow = canvas.getAllByRole("row")[1];
+    const cells = within(firstRow).getAllByRole("cell");
+    expect(cells[0].textContent).toContain("OpenAI: GPT-5.4 Pro");
   },
 };

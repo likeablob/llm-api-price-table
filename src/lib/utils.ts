@@ -42,8 +42,10 @@ export function sortModels(
       column === "inputCacheReadPrice" ||
       column === "inputCacheWritePrice"
     ) {
-      const aNum = (aValue ?? 0) as number;
-      const bNum = (bValue ?? 0) as number;
+      const aHasValue = aValue != null;
+      const bHasValue = bValue != null;
+      const aNum = aHasValue ? (aValue as number) : Infinity;
+      const bNum = bHasValue ? (bValue as number) : Infinity;
       return direction === "asc" ? aNum - bNum : bNum - aNum;
     }
 

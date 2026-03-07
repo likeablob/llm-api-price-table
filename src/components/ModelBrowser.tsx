@@ -20,6 +20,7 @@ import {
   Check,
   Copy,
   Plus,
+  Search,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ComparisonSection } from "./ComparisonSection";
@@ -133,13 +134,16 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
           <p className="text-muted-foreground text-sm">価格：$/1M Token</p>
         </div>
         <div className="mb-4">
-          <input
-            type="text"
-            placeholder="モデル名で検索"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          />
+          <div className="relative">
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="モデル名で検索"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border py-2 pr-3 pl-10 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            />
+          </div>
         </div>
 
         <Table data-testid="model-table">
@@ -236,21 +240,13 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                   出力モダリティ {getSortIcon("outputModalities")}
                 </div>
               </TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => handleSort("provider")}
-              >
-                <div className="flex items-center">
-                  プロバイダー {getSortIcon("provider")}
-                </div>
-              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredAndSortedModels.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={11}
+                  colSpan={10}
                   className="text-muted-foreground h-24 text-center"
                 >
                   モデルが見つかりません
@@ -323,7 +319,6 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                   <TableCell>
                     {formatModalities(model.outputModalities)}
                   </TableCell>
-                  <TableCell>{model.provider}</TableCell>
                 </TableRow>
               ))
             )}
