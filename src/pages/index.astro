@@ -1,12 +1,22 @@
-<!doctype html>
-<html lang="en">
+---
+import { ModelBrowser } from "@/components/ModelBrowser";
+import { fetchLLMModels } from "@/lib/llm-model-service";
+import "@/styles/global.css";
+
+const models = await fetchLLMModels();
+---
+
+<html lang="ja">
   <head>
-    <title>Hello World</title>
-    <meta name="description" content="Welcome to my site" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LLM Model Browser</title>
+    <meta name="description" content="LLM モデルの価格比較ブラウザ" />
   </head>
   <body>
-    <main>
-      <h1>Hello, World!</h1>
+    <main class="container mx-auto py-10">
+      <h1 class="mb-6 text-3xl font-bold">LLM Model Browser</h1>
+      <ModelBrowser models={models} client:load />
     </main>
   </body>
 </html>
