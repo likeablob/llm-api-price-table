@@ -124,3 +124,20 @@ export const WithIdCheckbox: Story = {
     expect(idCells).toHaveLength(3);
   },
 };
+
+export const ToggleAddRemove: Story = {
+  args: {
+    models: mockModels,
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+  },
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+    const plusButtons = canvas.getAllByRole("button", { name: /比較に追加/ });
+    await userEvent.click(plusButtons[0]);
+    const comparisonSection = canvas.getByText(/モデル比較/);
+    expect(comparisonSection).toBeInTheDocument();
+    await userEvent.click(plusButtons[0]);
+    const emptyMessage = canvas.getByText(/選択されたモデルはありません/i);
+    expect(emptyMessage).toBeInTheDocument();
+  },
+};

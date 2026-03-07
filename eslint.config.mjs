@@ -8,7 +8,9 @@ import storybook from "eslint-plugin-storybook";
 import globals from "globals";
 
 export default [
-  { ignores: ["dist/**", "node_modules/**", ".astro/**"] },
+  {
+    ignores: ["dist/**", "node_modules/**", ".astro/**", "storybook-static/**"],
+  },
   eslint.configs.recommended,
   {
     languageOptions: {
