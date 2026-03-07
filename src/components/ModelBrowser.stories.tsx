@@ -1,5 +1,6 @@
 import type { ModelData } from "@/lib/types";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, userEvent, within } from "storybook/test";
 import { ModelBrowser } from "./ModelBrowser";
 
 const meta = {
@@ -18,31 +19,40 @@ const mockModels: ModelData[] = [
     id: "openai/gpt-5.4-pro",
     name: "OpenAI: GPT-5.4 Pro",
     contextLength: 200000,
-    inputPrice: 0.0000025,
-    outputPrice: 0.000015,
+    inputPrice: 2.5,
+    outputPrice: 15,
+    inputCacheReadPrice: 1.25,
+    inputCacheWritePrice: 0.625,
     inputModalities: ["text"],
     outputModalities: ["text"],
     provider: "OpenAI",
+    createdAt: 1700000000,
   },
   {
     id: "anthropic/claude-3-5-sonnet",
     name: "Anthropic: Claude 3.5 Sonnet",
     contextLength: 200000,
-    inputPrice: 0.000003,
-    outputPrice: 0.000015,
-    inputModalities: ["text"],
+    inputPrice: 3,
+    outputPrice: 15,
+    inputCacheReadPrice: 1.5,
+    inputCacheWritePrice: 0.75,
+    inputModalities: ["text", "image"],
     outputModalities: ["text"],
     provider: "Anthropic",
+    createdAt: 1690000000,
   },
   {
     id: "google/gemini-2.0-flash",
     name: "Google: Gemini 2.0 Flash",
     contextLength: 1000000,
-    inputPrice: 0.00000015,
-    outputPrice: 0.0000006,
+    inputPrice: 0.15,
+    outputPrice: 0.6,
+    inputCacheReadPrice: 0.075,
+    inputCacheWritePrice: 0.0375,
     inputModalities: ["text", "image"],
     outputModalities: ["text"],
     provider: "Google",
+    createdAt: 1680000000,
   },
 ];
 
@@ -58,6 +68,11 @@ export const EmptyState: Story = {
     models: [],
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const emptyMessage = canvas.getByText("モデルが見つかりません");
+    expect(emptyMessage).toBeInTheDocument();
+  },
 };
 
 export const WithSearch: Story = {
@@ -65,8 +80,47 @@ export const WithSearch: Story = {
     models: mockModels,
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
-  play: async ({ canvas, userEvent }) => {
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
     const searchInput = canvas.getByPlaceholderText("モデル名で検索");
     await userEvent.type(searchInput, "Claude");
+    const modelCells = canvas.getAllByRole("cell", {
+      name: "Anthropic: Claude 3.5 Sonnet",
+    });
+    expect(modelCells).toHaveLength(1);
+  },
+};
+
+export const WithSearchById: Story = {
+  args: {
+    models: mockModels,
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+  },
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+    const checkbox = canvas.getByRole("checkbox", { name: /ID 表示/ });
+    await userEvent.click(checkbox);
+    const searchInput = canvas.getByPlaceholderText("モデル名で検索");
+    await userEvent.type(searchInput, "google/gemini");
+    const modelCells = canvas.getAllByRole("cell", {
+      name: "google/gemini-2.0-flash",
+    });
+    expect(modelCells).toHaveLength(1);
+  },
+};
+
+export const WithIdCheckbox: Story = {
+  args: {
+    models: mockModels,
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const checkbox = canvas.getByRole("checkbox", { name: /ID 表示/ });
+    await userEvent.click(checkbox);
+    const idCells = canvas.getAllByRole("cell", {
+      name: /openai\/gpt-5.4-pro|anthropic\/claude-3-5-sonnet|google\/gemini-2.0-flash/,
+    });
+    expect(idCells).toHaveLength(3);
   },
 };

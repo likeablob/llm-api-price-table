@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -10,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { ModelData } from "@/lib/types";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Check, Copy } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type SortColumn = keyof ModelData | null;
@@ -26,6 +27,8 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [showId, setShowId] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const filteredAndSortedModels = useMemo(() => {
     const modelList = models ?? [];
@@ -34,7 +37,9 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter((model) =>
-        model.name.toLowerCase().includes(query),
+        showId
+          ? model.id.toLowerCase().includes(query)
+          : model.name.toLowerCase().includes(query),
       );
     }
 
@@ -49,9 +54,9 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
           sortColumn === "inputCacheReadPrice" ||
           sortColumn === "inputCacheWritePrice"
         ) {
-          return sortDirection === "asc"
-            ? (aValue as number) - (bValue as number)
-            : (bValue as number) - (aValue as number);
+          const aNum = (aValue ?? 0) as number;
+          const bNum = (bValue ?? 0) as number;
+          return sortDirection === "asc" ? aNum - bNum : bNum - aNum;
         }
 
         if (sortColumn === "contextLength") {
@@ -123,6 +128,16 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
     return modalities.join(", ");
   };
 
+  const handleCopy = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="mb-4 flex items-center gap-2">
@@ -149,8 +164,25 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
               className="cursor-pointer"
               onClick={() => handleSort("name")}
             >
-              <div className="flex items-center">
-                モデル名 {getSortIcon("name")}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span>モデル名</span>
+                  {getSortIcon("name")}
+                </div>
+                <div
+                  className="flex items-center gap-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span className="text-muted-foreground text-xs">ID 表示</span>
+                  <Checkbox
+                    id="showId"
+                    checked={showId as boolean}
+                    onCheckedChange={(checked: unknown) =>
+                      setShowId(checked as boolean)
+                    }
+                    aria-label="ID 表示"
+                  />
+                </div>
               </div>
             </TableHead>
             <TableHead
@@ -233,16 +265,33 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
           {filteredAndSortedModels.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={9}
+                colSpan={10}
                 className="text-muted-foreground h-24 text-center"
               >
                 モデルが見つかりません
               </TableCell>
             </TableRow>
           ) : (
-            filteredAndSortedModels.map((model) => (
+            filteredAndSortedModels.map((model, index) => (
               <TableRow key={model.id}>
-                <TableCell className="font-medium">{model.name}</TableCell>
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-2">
+                    <span>{showId ? model.id : model.name}</span>
+                    <button
+                      onClick={() =>
+                        handleCopy(showId ? model.id : model.name, index)
+                      }
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      title={showId ? "ID をコピー" : "モデル名をコピー"}
+                    >
+                      {copiedIndex === index ? (
+                        <Check className="h-4 w-4" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </TableCell>
                 <TableCell>
                   {formatContextLength(model.contextLength)}
                 </TableCell>
