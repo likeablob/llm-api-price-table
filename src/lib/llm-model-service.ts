@@ -1,29 +1,32 @@
 import type { ModelData } from "@/lib/types";
+import { z } from "zod";
 
-interface OpenRouterAPIResponse {
-  data: OpenRouterModel[];
-}
+export const OpenRouterModelSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  created: z.number(),
+  context_length: z.number().nullable(),
+  pricing: z.object({
+    prompt: z.string(),
+    completion: z.string(),
+    input_cache_read: z.string().optional(),
+    input_cache_write: z.string().optional(),
+  }),
+  architecture: z.object({
+    modality: z.string(),
+    input_modalities: z.array(z.string()),
+    output_modalities: z.array(z.string()),
+  }),
+  top_provider: z.object({
+    name: z.string().optional(),
+  }),
+});
 
-interface OpenRouterModel {
-  id: string;
-  name: string;
-  created: number;
-  context_length: number | null;
-  pricing: {
-    prompt: string;
-    completion: string;
-    input_cache_read?: string;
-    input_cache_write?: string;
-  };
-  architecture: {
-    modality: string;
-    input_modalities: string[];
-    output_modalities: string[];
-  };
-  top_provider: {
-    name?: string;
-  };
-}
+export const OpenRouterAPIResponseSchema = z.object({
+  data: z.array(OpenRouterModelSchema),
+});
+
+export type OpenRouterModel = z.infer<typeof OpenRouterModelSchema>;
 
 export function parsePriceFromString(priceString: string): number {
   const parsed = parseFloat(priceString);
@@ -96,7 +99,8 @@ export async function fetchLLMModels(): Promise<ModelData[]> {
       return [];
     }
 
-    const apiResponse: OpenRouterAPIResponse = await response.json();
+    const rawData = await response.json();
+    const apiResponse = OpenRouterAPIResponseSchema.parse(rawData);
 
     return apiResponse.data
       .map((model) => transformOpenRouterModel(model))

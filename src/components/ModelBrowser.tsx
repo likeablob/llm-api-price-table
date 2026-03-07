@@ -58,6 +58,21 @@ export function ModelBrowser({ models }: ModelBrowserProps) {
             : (bValue as number) - (aValue as number);
         }
 
+        if (
+          sortColumn === "inputModalities" ||
+          sortColumn === "outputModalities"
+        ) {
+          const aArr = Array.isArray(aValue) ? aValue : [];
+          const bArr = Array.isArray(bValue) ? bValue : [];
+          const aLen = aArr.length;
+          const bLen = bArr.length;
+
+          if (sortDirection === "asc") {
+            return aLen - bLen;
+          }
+          return bLen - aLen;
+        }
+
         const aStr = String(aValue ?? "").toLowerCase();
         const bStr = String(bValue ?? "").toLowerCase();
 
@@ -184,7 +199,15 @@ export function ModelBrowser({ models }: ModelBrowserProps) {
               onClick={() => handleSort("inputModalities")}
             >
               <div className="flex items-center">
-                入出力モダリティ {getSortIcon("inputModalities")}
+                入力モダリティ {getSortIcon("inputModalities")}
+              </div>
+            </TableHead>
+            <TableHead
+              className="cursor-pointer"
+              onClick={() => handleSort("outputModalities")}
+            >
+              <div className="flex items-center">
+                出力モダリティ {getSortIcon("outputModalities")}
               </div>
             </TableHead>
             <TableHead
@@ -201,7 +224,7 @@ export function ModelBrowser({ models }: ModelBrowserProps) {
           {filteredAndSortedModels.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={9}
                 className="text-muted-foreground h-24 text-center"
               >
                 モデルが見つかりません
@@ -233,15 +256,9 @@ export function ModelBrowser({ models }: ModelBrowserProps) {
                     ? formatPrice(model.inputCacheWritePrice)
                     : "-"}
                 </TableCell>
+                <TableCell>{formatModalities(model.inputModalities)}</TableCell>
                 <TableCell>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-muted-foreground text-xs">
-                      入力：{formatModalities(model.inputModalities)}
-                    </span>
-                    <span className="text-muted-foreground text-xs">
-                      出力：{formatModalities(model.outputModalities)}
-                    </span>
-                  </div>
+                  {formatModalities(model.outputModalities)}
                 </TableCell>
                 <TableCell>{model.provider}</TableCell>
               </TableRow>

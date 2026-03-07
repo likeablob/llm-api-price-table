@@ -7,6 +7,7 @@ describe("fetchLLMModels", () => {
       {
         id: "openai/gpt-5.4-pro",
         name: "OpenAI: GPT-5.4 Pro",
+        created: 1234567890,
         context_length: 200000,
         pricing: {
           prompt: "0.0000025",
@@ -74,6 +75,7 @@ describe("fetchLLMModels", () => {
       {
         id: "anthropic/claude-3-5-sonnet",
         name: "Anthropic: Claude 3.5 Sonnet",
+        created: 1234567890,
         context_length: 200000,
         pricing: {
           prompt: "0.000003",
