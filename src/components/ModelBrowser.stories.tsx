@@ -49,18 +49,21 @@ const mockModels: ModelData[] = [
 export const Default: Story = {
   args: {
     models: mockModels,
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
 };
 
 export const EmptyState: Story = {
   args: {
     models: [],
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
 };
 
 export const WithSearch: Story = {
   args: {
     models: mockModels,
+    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
   play: async ({ canvas, userEvent }) => {
     const searchInput = canvas.getByPlaceholderText("モデル名で検索");

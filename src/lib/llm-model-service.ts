@@ -4,7 +4,7 @@ import { z } from "zod";
 export const OpenRouterModelSchema = z.object({
   id: z.string(),
   name: z.string(),
-  created: z.number(),
+  created: z.number().optional(),
   context_length: z.number().nullable(),
   pricing: z.object({
     prompt: z.string(),

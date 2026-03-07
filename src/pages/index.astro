@@ -4,6 +4,7 @@ import { fetchLLMModels } from "@/lib/llm-model-service";
 import "@/styles/global.css";
 
 const models = await fetchLLMModels();
+const buildDate = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
 ---
 
 <html lang="ja">
@@ -16,7 +17,7 @@ const models = await fetchLLMModels();
   <body>
     <main class="container mx-auto py-10">
       <h1 class="mb-6 text-3xl font-bold">LLM Model Browser</h1>
-      <ModelBrowser models={models} client:load />
+      <ModelBrowser models={models} buildDate={buildDate} client:load />
     </main>
   </body>
 </html>

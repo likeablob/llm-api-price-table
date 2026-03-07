@@ -63,6 +63,7 @@ describe("transformOpenRouterModel", () => {
     const openRouterModel = {
       id: "openai/gpt-5.4-pro",
       name: "OpenAI: GPT-5.4 Pro",
+      created: 1234567890,
       context_length: 200000,
       pricing: {
         prompt: "0.0000025",
@@ -94,6 +95,7 @@ describe("transformOpenRouterModel", () => {
     const openRouterModel = {
       id: "anthropic/claude-3-5-sonnet",
       name: "Anthropic: Claude 3.5 Sonnet",
+      created: 1234567890,
       context_length: 200000,
       pricing: {
         prompt: "0.000003",
@@ -116,6 +118,7 @@ describe("transformOpenRouterModel", () => {
     const openRouterModel = {
       id: "test/model",
       name: "Test Model",
+      created: 1234567890,
       context_length: null,
       pricing: {
         prompt: "0.000001",

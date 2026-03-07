@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,17 +11,18 @@ import {
 } from "@/components/ui/table";
 import type { ModelData } from "@/lib/types";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 type SortColumn = keyof ModelData | null;
 
 interface ModelBrowserProps {
   models: ModelData[];
+  buildDate: string;
 }
 
 type SortDirection = "asc" | "desc";
 
-export function ModelBrowser({ models }: ModelBrowserProps) {
+export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -123,7 +125,14 @@ export function ModelBrowser({ models }: ModelBrowserProps) {
 
   return (
     <div className="w-full">
-      <div className="mb-4 flex items-center">
+      <div className="mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold">モデル一覧</h2>
+        <Badge variant="secondary">
+          {filteredAndSortedModels.length} 個のモデル
+        </Badge>
+        <Badge variant="outline">最終更新：{buildDate}</Badge>
+      </div>
+      <div className="mb-4">
         <input
           type="text"
           placeholder="モデル名で検索"
