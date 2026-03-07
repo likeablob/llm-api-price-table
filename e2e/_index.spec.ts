@@ -1,4 +1,4 @@
-import { expect, test, type BrowserContext } from "@playwright/test";
+import { test } from "@playwright/test";
 import { HomePage } from "./lib/home-page";
 
 test.describe("Home Page", () => {

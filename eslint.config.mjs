@@ -1,11 +1,14 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import eslint from "@eslint/js";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import astroParser from "astro-eslint-parser";
 import astroPlugin from "eslint-plugin-astro";
+import storybook from "eslint-plugin-storybook";
 import globals from "globals";
 
 export default [
+  { ignores: ["dist/**", "node_modules/**", ".astro/**"] },
   eslint.configs.recommended,
   {
     languageOptions: {
@@ -39,4 +42,5 @@ export default [
       },
     },
   },
+  ...storybook.configs["flat/recommended"],
 ];
