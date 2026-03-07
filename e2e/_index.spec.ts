@@ -24,7 +24,7 @@ class BasePage {
 
 class HomePage extends BasePage {
   get heading() {
-    return this.page.getByRole("heading", { name: "LLM Model Browser" });
+    return this.page.getByRole("heading", { name: "LLM API Price Table" });
   }
 
   async goto(): Promise<void> {
