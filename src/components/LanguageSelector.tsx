@@ -20,7 +20,7 @@ export function LanguageSelectorReact({
       value={currentLocale}
       onValueChange={(value) => {
         if (value !== currentLocale) {
-          const url = `/${value}/`;
+          const url = `${import.meta.env.BASE_URL}/${value}/`;
           window.location.href = url;
         }
       }}

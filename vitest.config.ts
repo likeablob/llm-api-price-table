@@ -10,6 +10,13 @@ const dirname =
     : path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  // This is required to prevent "Invalid hook call" and "useState of null" errors in React 19.
+  // Vite optimizes react/jsx-dev-runtime during the first test execution, which temporarily
+  // breaks React hooks. Pre-bundling it here ensures a stable testing environment from the start.
+  // ref: https://github.com/storybookjs/storybook/issues/32049
+  optimizeDeps: {
+    include: ["react/jsx-dev-runtime"],
+  },
   test: {
     projects: [
       {

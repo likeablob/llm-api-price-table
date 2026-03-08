@@ -1,4 +1,4 @@
-import { localeLabels, LOCALES, type Locale } from "@/lib/translations";
+import { LOCALES, type Locale } from "@/lib/translations";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { LanguageSelectorReact } from "./LanguageSelector";
 

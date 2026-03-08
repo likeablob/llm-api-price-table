@@ -4,10 +4,11 @@ import { LOCALES, type Locale } from "@/lib/translations";
 
 const validLocales = LOCALES;
 const defaultLocale: Locale = "en";
+const base = Astro.url.pathname.replace(/\/$/, "");
 ---
 
 <div
-  data-locale-config={JSON.stringify({ validLocales, defaultLocale })}
+  data-locale-config={JSON.stringify({ validLocales, defaultLocale, base })}
   hidden
 >
 </div>
@@ -21,48 +22,48 @@ const defaultLocale: Locale = "en";
     if (!configJson) return;
 
     const config = JSON.parse(configJson);
-    const { validLocales, defaultLocale } = config;
+    const { validLocales, defaultLocale, base } = config;
 
     const savedPreference = localStorage.getItem("i18n-preference");
     if (
       savedPreference &&
       (validLocales as string[]).includes(savedPreference)
     ) {
-      window.location.replace(`/${savedPreference}/`);
+      window.location.replace(`${base}/${savedPreference}/`);
       return;
     }
 
     const browserLang = navigator.language.toLowerCase().split("-")[0];
     if ((validLocales as string[]).includes(browserLang)) {
-      window.location.replace(`/${browserLang}/`);
+      window.location.replace(`${base}/${browserLang}/`);
       return;
     }
 
-    window.location.replace(`/${defaultLocale}/`);
+    window.location.replace(`${base}/${defaultLocale}/`);
   })();
 </script>
 <html>
   <head>
-    <meta http-equiv="refresh" content="1;url=/en/" />
+    <meta http-equiv="refresh" content={`1;url=${base}/en/`} />
     <meta
       name="description"
       content="LLM API Price Comparison - Compare pricing across multiple LLM API providers"
     />
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="canonical" href={new URL("/en/", Astro.site)} />
+    <link rel="canonical" href={new URL(`${base}/en/`, Astro.site)} />
     <meta property="og:title" content="LLM API Price Comparison" />
     <meta
       property="og:description"
       content="Compare pricing across multiple LLM API providers"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={new URL("/en/", Astro.site)} />
+    <meta property="og:url" content={new URL(`${base}/en/`, Astro.site)} />
     <meta name="twitter:card" content="summary" />
   </head>
   <body>
     <p>Redirecting</p>
     <noscript>
-      <p>to <a href="/en/">English version</a>...</p>
+      <p>to <a href={`${base}/en/`}>English version</a>...</p>
     </noscript>
   </body>
 </html>
