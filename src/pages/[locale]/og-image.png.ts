@@ -13,7 +13,11 @@ export const GET: APIRoute = async ({ params }) => {
   }
 
   const title = t(locale as Locale, "title");
-  const png = await generateOgpImage(title);
+  const png = await generateOgpImage(
+    title,
+    locale as string,
+    "LLM API Price Comparison",
+  );
 
   return new Response(new Uint8Array(png), {
     headers: {

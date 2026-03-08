@@ -1,7 +1,7 @@
 ---
 import LanguageSelector from "@/components/LanguageSelector.astro";
 import type { Locale } from "@/lib/translations";
-import { LOCALES, t, ogLocaleMap } from "@/lib/translations";
+import { LOCALES, ogLocaleMap, t } from "@/lib/translations";
 import { isValidLocale } from "@/lib/utils";
 
 const { locale } = Astro.props;
@@ -24,21 +24,38 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link rel="canonical" href={canonicalURL} />
     {
       LOCALES.map((loc: Locale) => (
-        <link rel="alternate" hreflang={loc} href={new URL(`/${loc}/`, Astro.site)} />
+        <link
+          rel="alternate"
+          hreflang={loc}
+          href={new URL(`/${loc}/`, Astro.site)}
+        />
       ))
     }
-    <link rel="alternate" hreflang="x-default" href={new URL("/en/", Astro.site)} />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL("/en/", Astro.site)}
+    />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={t(currentLocale, "title")} />
     <meta property="og:description" content={t(currentLocale, "description")} />
     <meta property="og:locale" content={ogLocale} />
     <meta property="og:site_name" content="AI Model Price Comparison" />
-    <meta property="og:image" content={new URL("./og-image.png", canonicalURL)} />
+    <meta
+      property="og:image"
+      content={new URL("./og-image.png", canonicalURL)}
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={t(currentLocale, "title")} />
-    <meta name="twitter:description" content={t(currentLocale, "description")} />
-    <meta name="twitter:image" content={new URL("./og-image.png", canonicalURL)} />
+    <meta
+      name="twitter:description"
+      content={t(currentLocale, "description")}
+    />
+    <meta
+      name="twitter:image"
+      content={new URL("./og-image.png", canonicalURL)}
+    />
   </head>
   <body>
     <LanguageSelector currentLocale={currentLocale} />
