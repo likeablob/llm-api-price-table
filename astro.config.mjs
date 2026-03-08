@@ -10,7 +10,6 @@ import { loadEnv } from "vite";
 // https://astro.build/config
 const mode = "production";
 const env = loadEnv(mode, process.cwd(), "");
-console.log("SITE env:", env.SITE);
 
 export default defineConfig({
   site: env.SITE || "https://example.com",

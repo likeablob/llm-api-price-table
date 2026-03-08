@@ -1,10 +1,5 @@
 import { expect, type BrowserContext, type Page } from "@playwright/test";
-import { type Locale } from "../../../src/lib/translations";
-
-const localeLabels = { en: "English", ja: "日本語" } satisfies Record<
-  Locale,
-  string
->;
+import { localeLabels, type Locale } from "../../../src/lib/translations";
 
 export class IndexPage {
   public page: Page;

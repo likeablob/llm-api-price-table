@@ -2,11 +2,12 @@
 /* ルートページはリダイレクトのみを担当 */
 import { LOCALES, type Locale } from "@/lib/translations";
 
-const localeMap = { en: "/en/", ja: "/ja/" } satisfies Record<Locale, string>;
+const validLocales = LOCALES;
+const defaultLocale: Locale = "en";
 ---
 
 <div
-  data-locale-config={JSON.stringify({ validLocales: LOCALES, localeMap })}
+  data-locale-config={JSON.stringify({ validLocales, defaultLocale })}
   hidden
 >
 </div>
@@ -20,21 +21,24 @@ const localeMap = { en: "/en/", ja: "/ja/" } satisfies Record<Locale, string>;
     if (!configJson) return;
 
     const config = JSON.parse(configJson);
-    const { validLocales, localeMap } = config;
+    const { validLocales, defaultLocale } = config;
 
     const savedPreference = localStorage.getItem("i18n-preference");
-    if (savedPreference && validLocales.includes(savedPreference)) {
-      window.location.replace(localeMap[savedPreference]);
+    if (
+      savedPreference &&
+      (validLocales as string[]).includes(savedPreference)
+    ) {
+      window.location.replace(`/${savedPreference}/`);
       return;
     }
 
     const browserLang = navigator.language.toLowerCase().split("-")[0];
-    if (validLocales.includes(browserLang)) {
-      window.location.replace(localeMap[browserLang]);
+    if ((validLocales as string[]).includes(browserLang)) {
+      window.location.replace(`/${browserLang}/`);
       return;
     }
 
-    window.location.replace("/en/");
+    window.location.replace(`/${defaultLocale}/`);
   })();
 </script>
 <html>

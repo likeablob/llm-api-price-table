@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { t, tTableHeader, type Locale } from "@/lib/translations";
+import { t, type Locale } from "@/lib/translations";
 import type { ModelData } from "@/lib/types";
 import { useModelSelection } from "@/lib/use-model-selection";
 import { sortModels, type SortColumn, type SortDirection } from "@/lib/utils";
@@ -178,7 +178,7 @@ export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span>{tTableHeader(locale, "modelName")}</span>
+                    <span>{t(locale, "tableHeaders.modelName")}</span>
                     {getSortIcon("name")}
                   </div>
                   <div
@@ -204,7 +204,7 @@ export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("contextLength")}
               >
                 <div className="flex items-center">
-                  {tTableHeader(locale, "contextLength")}{" "}
+                  {t(locale, "tableHeaders.contextLength")}{" "}
                   {getSortIcon("contextLength")}
                 </div>
               </TableHead>
@@ -213,7 +213,8 @@ export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("createdAt")}
               >
                 <div className="flex items-center">
-                  {tTableHeader(locale, "createdAt")} {getSortIcon("createdAt")}
+                  {t(locale, "tableHeaders.createdAt")}{" "}
+                  {getSortIcon("createdAt")}
                 </div>
               </TableHead>
               <TableHead
@@ -221,7 +222,7 @@ export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("inputPrice")}
               >
                 <div className="flex items-center">
-                  {tTableHeader(locale, "input")} {getSortIcon("inputPrice")}
+                  {t(locale, "tableHeaders.input")} {getSortIcon("inputPrice")}
                 </div>
               </TableHead>
               <TableHead
@@ -229,7 +230,8 @@ export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("outputPrice")}
               >
                 <div className="flex items-center">
-                  {tTableHeader(locale, "output")} {getSortIcon("outputPrice")}
+                  {t(locale, "tableHeaders.output")}{" "}
+                  {getSortIcon("outputPrice")}
                 </div>
               </TableHead>
               <TableHead
@@ -237,7 +239,7 @@ export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("inputCacheReadPrice")}
               >
                 <div className="flex items-center">
-                  {tTableHeader(locale, "inputCacheRead")}{" "}
+                  {t(locale, "tableHeaders.inputCacheRead")}{" "}
                   {getSortIcon("inputCacheReadPrice")}
                 </div>
               </TableHead>
@@ -246,7 +248,7 @@ export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("inputCacheWritePrice")}
               >
                 <div className="flex items-center">
-                  {tTableHeader(locale, "inputCacheWrite")}{" "}
+                  {t(locale, "tableHeaders.inputCacheWrite")}{" "}
                   {getSortIcon("inputCacheWritePrice")}
                 </div>
               </TableHead>
@@ -255,7 +257,7 @@ export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("inputModalities")}
               >
                 <div className="flex items-center">
-                  {tTableHeader(locale, "inputModalities")}{" "}
+                  {t(locale, "tableHeaders.inputModalities")}{" "}
                   {getSortIcon("inputModalities")}
                 </div>
               </TableHead>
@@ -264,7 +266,7 @@ export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("outputModalities")}
               >
                 <div className="flex items-center">
-                  {tTableHeader(locale, "outputModalities")}{" "}
+                  {t(locale, "tableHeaders.outputModalities")}{" "}
                   {getSortIcon("outputModalities")}
                 </div>
               </TableHead>

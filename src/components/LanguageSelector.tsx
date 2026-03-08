@@ -5,17 +5,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LOCALES, type Locale } from "@/lib/translations";
+import { localeLabels, LOCALES, type Locale } from "@/lib/translations";
 import { Globe } from "lucide-react";
 
 interface LanguageSelectorProps {
   currentLocale: Locale;
 }
-
-const localeLabels = {
-  en: "English",
-  ja: "日本語",
-} satisfies Record<Locale, string>;
 
 export function LanguageSelectorReact({
   currentLocale,
@@ -24,12 +19,14 @@ export function LanguageSelectorReact({
     <Select
       value={currentLocale}
       onValueChange={(value) => {
-        const url = `/${value}/`;
-        window.location.href = url;
+        if (value !== currentLocale) {
+          const url = `/${value}/`;
+          window.location.href = url;
+        }
       }}
     >
       <SelectTrigger
-        className="bg-background/80 h-9 w-[130px] backdrop-blur-sm"
+        className="bg-background/80 h-9 w-[150px] backdrop-blur-sm"
         data-testid="language-selector"
       >
         <Globe className="mr-2 h-4 w-4" />

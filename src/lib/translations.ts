@@ -1,83 +1,64 @@
-export const LOCALES = ["en", "ja"] as const;
+import { dict as de } from "./i18n/de";
+import { dict as en, type TranslationKey } from "./i18n/en";
+import { dict as es } from "./i18n/es";
+import { dict as fr } from "./i18n/fr";
+import { dict as it } from "./i18n/it";
+import { dict as ja } from "./i18n/ja";
+import { dict as ko } from "./i18n/ko";
+import { dict as nl } from "./i18n/nl";
+import { dict as pt } from "./i18n/pt";
+import { dict as zhCn } from "./i18n/zh-cn";
+import { dict as zhTw } from "./i18n/zh-tw";
+
+export const LOCALES = [
+  "de",
+  "en",
+  "es",
+  "fr",
+  "it",
+  "ja",
+  "ko",
+  "nl",
+  "pt",
+  "zh-cn",
+  "zh-tw",
+] as const;
 export type Locale = (typeof LOCALES)[number];
 
-const baseTranslations = {
-  en: {
-    title: "LLM API Price Table",
-    description: "LLM API price comparison table",
-    modelList: "Model List",
-    modelsCount: "models",
-    lastUpdated: "Last Updated",
-    priceLabel: "Price: $/1M Token",
-    searchPlaceholder: "Search by model name",
-    showId: "Show ID",
-    copyId: "Copy ID",
-    copyName: "Copy model name",
-    addToComparison: "Add to comparison",
-    selected: "Selected",
-    noModelsFound: "No models selected. Please select from the model list.",
-    comparisonTitle: "Comparison",
-    clearAll: "Clear All",
-    deleteModel: "Delete model",
-  },
-  ja: {
-    title: "LLM API 価格表",
-    description: "LLM API 価格比較表",
-    modelList: "モデル一覧",
-    modelsCount: "個のモデル",
-    lastUpdated: "最終更新",
-    priceLabel: "価格：$/1M Token",
-    searchPlaceholder: "モデル名で検索",
-    showId: "ID 表示",
-    copyId: "ID をコピー",
-    copyName: "モデル名をコピー",
-    addToComparison: "比較に追加",
-    selected: "選択済み",
-    noModelsFound:
-      "モデルが選択されていません。モデル一覧から選択してください。",
-    comparisonTitle: "比較",
-    clearAll: "すべてクリア",
-    deleteModel: "モデルを削除",
-  },
-} as const;
-
-const tableHeaders = {
-  en: {
-    modelName: "Model Name",
-    contextLength: "Context Length",
-    createdAt: "Created At",
-    input: "Input",
-    output: "Output",
-    inputCacheRead: "Input Cache Read",
-    inputCacheWrite: "Input Cache Write",
-    inputModalities: "Input Modalities",
-    outputModalities: "Output Modalities",
-  },
-  ja: {
-    modelName: "モデル名",
-    contextLength: "コンテキスト長",
-    createdAt: "作成日",
-    input: "入力",
-    output: "出力",
-    inputCacheRead: "入力キャッシュ読み取り",
-    inputCacheWrite: "入力キャッシュ書き込み",
-    inputModalities: "入力モダリティ",
-    outputModalities: "出力モダリティ",
-  },
-} as const;
-
 export const translations = {
-  en: { ...baseTranslations.en, ...tableHeaders.en },
-  ja: { ...baseTranslations.ja, ...tableHeaders.ja },
+  de,
+  en,
+  es,
+  fr,
+  it,
+  ja,
+  ko,
+  nl,
+  pt,
+  "zh-cn": zhCn,
+  "zh-tw": zhTw,
 } as const;
-
-export type TranslationKey = keyof typeof baseTranslations.en;
-export type TableHeaderKey = keyof typeof tableHeaders.en;
 
 export function t(locale: Locale, key: TranslationKey): string {
-  return translations[locale][key] ?? translations.en[key];
+  const dict = translations[locale];
+  const keys = key.split(".") as Array<
+    keyof typeof dict | keyof typeof dict.tableHeaders
+  >;
+
+  if (keys.length === 2) {
+    const [parent, child] = keys;
+    const group = dict[parent as keyof typeof dict];
+    if (typeof group === "object" && group !== null && child in group) {
+      return (group as any)[child];
+    }
+  }
+
+  return (dict as any)[key] ?? (translations.en as any)[key] ?? key;
 }
 
-export function tTableHeader(locale: Locale, key: TableHeaderKey): string {
-  return translations[locale][key] ?? translations.en[key];
-}
+export const localeLabels = Object.fromEntries(
+  Object.entries(translations).map(([locale, dict]) => [
+    locale,
+    dict.localeName,
+  ]),
+) as Record<Locale, string>;

@@ -1,7 +1,7 @@
 ---
 import LanguageSelector from "@/components/LanguageSelector.astro";
 import type { Locale } from "@/lib/translations";
-import { t } from "@/lib/translations";
+import { LOCALES, t } from "@/lib/translations";
 import { isValidLocale } from "@/lib/utils";
 
 const { locale } = Astro.props;
@@ -21,11 +21,14 @@ const baseSite = import.meta.env.SITE || "https://example.com";
     <meta name="description" content={t(currentLocale, "description")} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={`${baseSite}/${locale}/`} />
-    <link rel="alternate" hreflang="en" href={`${baseSite}/en/`} />
-    <link rel="alternate" hreflang="ja" href={`${baseSite}/ja/`} />
+    {
+      LOCALES.map((loc: Locale) => (
+        <link rel="alternate" hreflang={loc} href={`${baseSite}/${loc}/`} />
+      ))
+    }
   </head>
   <body>
-    <LanguageSelector />
+    <LanguageSelector currentLocale={currentLocale} />
     <slot />
   </body>
 </html>
