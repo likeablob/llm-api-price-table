@@ -62,3 +62,17 @@ export const localeLabels = Object.fromEntries(
     dict.localeName,
   ]),
 ) as Record<Locale, string>;
+
+export const ogLocaleMap: Readonly<Record<Locale, string>> = {
+  de: "de_DE",
+  en: "en_US",
+  es: "es_ES",
+  fr: "fr_FR",
+  it: "it_IT",
+  ja: "ja_JP",
+  ko: "ko_KR",
+  nl: "nl_NL",
+  pt: "pt_BR",
+  "zh-cn": "zh_CN",
+  "zh-tw": "zh_TW",
+};
