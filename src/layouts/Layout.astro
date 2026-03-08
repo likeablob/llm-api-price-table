@@ -1,0 +1,31 @@
+---
+import LanguageSelector from "@/components/LanguageSelector.astro";
+import type { Locale } from "@/lib/translations";
+import { t } from "@/lib/translations";
+import { isValidLocale } from "@/lib/utils";
+
+const { locale } = Astro.props;
+
+const currentLocale = isValidLocale(locale)
+  ? (locale as Locale)
+  : ("en" satisfies Locale);
+
+const baseSite = import.meta.env.SITE || "https://example.com";
+---
+
+<html lang={currentLocale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{t(currentLocale, "title")}</title>
+    <meta name="description" content={t(currentLocale, "description")} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={`${baseSite}/${locale}/`} />
+    <link rel="alternate" hreflang="en" href={`${baseSite}/en/`} />
+    <link rel="alternate" hreflang="ja" href={`${baseSite}/ja/`} />
+  </head>
+  <body>
+    <LanguageSelector />
+    <slot />
+  </body>
+</html>

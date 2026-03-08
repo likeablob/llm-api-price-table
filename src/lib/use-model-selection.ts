@@ -62,18 +62,21 @@ export function clearSelection(): SelectedModels {
 
 export function useModelSelection(initialIds: SelectedModels = []): {
   selectedModelIds: SelectedModels;
+  isLoaded: boolean;
   addModel: (id: string) => void;
   removeModel: (id: string) => void;
   clearAll: () => void;
 } {
   const [selectedModelIds, setSelectedModelIds] =
     useState<SelectedModels>(initialIds);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const loaded = loadSelectionFromStorage();
     if (loaded.length > 0) {
       setSelectedModelIds(loaded);
     }
+    setIsLoaded(true);
   }, []);
 
   const addModel = useCallback((id: string) => {
@@ -100,6 +103,7 @@ export function useModelSelection(initialIds: SelectedModels = []): {
 
   return {
     selectedModelIds,
+    isLoaded,
     addModel,
     removeModel,
     clearAll,

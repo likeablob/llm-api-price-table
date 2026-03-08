@@ -3,14 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { ComparisonSection } from "./ComparisonSection";
 
-const meta = {
-  title: "Components/ComparisonSection",
-  component: ComparisonSection,
-} satisfies Meta<typeof ComparisonSection>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 const mockModels: ModelData[] = [
   {
     id: "openai/gpt-4",
@@ -44,17 +36,29 @@ const mockModels: ModelData[] = [
   },
 ];
 
+const meta = {
+  title: "Components/ComparisonSection",
+  component: ComparisonSection,
+  args: {
+    locale: "en" as const,
+    models: mockModels,
+    isLoaded: true,
+  },
+} satisfies Meta<typeof ComparisonSection>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
 export const EmptyState: Story = {
   args: {
-    models: mockModels,
     selectedModelIds: [],
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const emptyMessage = canvas.getByText(/選択されたモデルはありません/i);
+    const emptyMessage = canvas.getByText(/No models selected/i);
     expect(emptyMessage).toBeInTheDocument();
     const clearAllButton = canvas.queryByRole("button", {
-      name: /すべてクリア/i,
+      name: /Clear All/i,
     });
     expect(clearAllButton).not.toBeInTheDocument();
   },
@@ -62,7 +66,6 @@ export const EmptyState: Story = {
 
 export const WithOneModel: Story = {
   args: {
-    models: mockModels,
     selectedModelIds: ["openai/gpt-4"],
   },
   play: async ({ canvasElement }) => {
@@ -71,10 +74,10 @@ export const WithOneModel: Story = {
     expect(canvas.getByText("128,000")).toBeInTheDocument();
     expect(canvas.getByText("$0.03")).toBeInTheDocument();
     expect(canvas.getByText("$0.06")).toBeInTheDocument();
-    const deleteButton = canvas.getByRole("button", { name: /削除/i });
+    const deleteButton = canvas.getByRole("button", { name: /Delete/i });
     expect(deleteButton).toBeInTheDocument();
     const clearAllButton = canvas.getByRole("button", {
-      name: /すべてクリア/i,
+      name: /Clear All/i,
     });
     expect(clearAllButton).toBeInTheDocument();
   },
@@ -82,7 +85,6 @@ export const WithOneModel: Story = {
 
 export const WithMultipleModels: Story = {
   args: {
-    models: mockModels,
     selectedModelIds: ["openai/gpt-4", "anthropic/claude-3"],
   },
   play: async ({ canvasElement }) => {
@@ -90,14 +92,13 @@ export const WithMultipleModels: Story = {
     expect(canvas.getByText("GPT-4")).toBeInTheDocument();
     expect(canvas.getByText("Claude 3")).toBeInTheDocument();
     expect(canvas.queryByText("Gemini 1.5")).not.toBeInTheDocument();
-    const deleteButtons = canvas.getAllByRole("button", { name: /削除/i });
+    const deleteButtons = canvas.getAllByRole("button", { name: /Delete/i });
     expect(deleteButtons).toHaveLength(2);
   },
 };
 
 export const WithAllModels: Story = {
   args: {
-    models: mockModels,
     selectedModelIds: [
       "openai/gpt-4",
       "anthropic/claude-3",
@@ -110,7 +111,7 @@ export const WithAllModels: Story = {
     expect(canvas.getByText("Claude 3")).toBeInTheDocument();
     expect(canvas.getByText("Gemini 1.5")).toBeInTheDocument();
     const clearAllButton = canvas.getByRole("button", {
-      name: /すべてクリア/i,
+      name: /Clear All/i,
     });
     expect(clearAllButton).toBeInTheDocument();
   },
@@ -118,14 +119,13 @@ export const WithAllModels: Story = {
 
 export const DeleteButton: Story = {
   args: {
-    models: mockModels,
     selectedModelIds: ["openai/gpt-4"],
     onRemove: fn(),
     onClearAll: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const deleteButton = canvas.getByRole("button", { name: /削除/i });
+    const deleteButton = canvas.getByRole("button", { name: /Delete/i });
     await userEvent.click(deleteButton);
     await waitFor(() => {
       expect(args.onRemove).toHaveBeenCalledWith("openai/gpt-4");
@@ -135,7 +135,6 @@ export const DeleteButton: Story = {
 
 export const ClearAllButton: Story = {
   args: {
-    models: mockModels,
     selectedModelIds: [
       "openai/gpt-4",
       "anthropic/claude-3",
@@ -147,7 +146,7 @@ export const ClearAllButton: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const clearAllButton = canvas.getByRole("button", {
-      name: /すべてクリア/i,
+      name: /Clear All/i,
     });
     await userEvent.click(clearAllButton);
     await waitFor(() => {
@@ -158,7 +157,6 @@ export const ClearAllButton: Story = {
 
 export const SortFunctionality: Story = {
   args: {
-    models: mockModels,
     selectedModelIds: [
       "openai/gpt-4",
       "anthropic/claude-3",
@@ -167,7 +165,7 @@ export const SortFunctionality: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const nameHeader = canvas.getByText(/モデル名/);
+    const nameHeader = canvas.getByText(/Model Name/);
     await userEvent.click(nameHeader);
     await waitFor(() => {
       const rows = canvas.getAllByRole("row").slice(1);

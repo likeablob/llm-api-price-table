@@ -1,0 +1,45 @@
+---
+import { ModelBrowser } from "@/components/ModelBrowser";
+import Layout from "@/layouts/Layout.astro";
+import { fetchLLMModels } from "@/lib/llm-model-service";
+import { LOCALES, t, type Locale } from "@/lib/translations";
+import { isValidLocale } from "@/lib/utils";
+import "@/styles/global.css";
+
+const { locale } = Astro.params;
+
+export async function getStaticPaths() {
+  const models = await fetchLLMModels();
+  const buildDate = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+
+  return LOCALES.map((locale) => ({
+    params: { locale },
+    props: { models, buildDate },
+  }));
+}
+
+const { models, buildDate } = Astro.props;
+
+const currentLocale = isValidLocale(locale)
+  ? (locale as Locale)
+  : ("en" satisfies Locale);
+---
+
+<Layout locale={locale}>
+  <main class="container mx-auto py-10">
+    <h1 class="mb-6 text-3xl font-bold">
+      {t(currentLocale, "title")}
+    </h1>
+    <ModelBrowser
+      locale={currentLocale}
+      models={models}
+      buildDate={buildDate}
+      client:load
+    />
+  </main>
+</Layout>
+
+<script is:inline>
+  const preference = "${locale}";
+  localStorage.setItem("i18n-preference", preference);
+</script>

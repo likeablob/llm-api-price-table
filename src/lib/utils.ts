@@ -1,9 +1,15 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { LOCALES, type Locale } from "./translations";
 import type { ModelData } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function isValidLocale(locale: string | undefined): locale is Locale {
+  if (!locale) return false;
+  return LOCALES.includes(locale as Locale);
 }
 
 export function formatPrice(price: number): string {

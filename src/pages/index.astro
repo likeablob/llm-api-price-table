@@ -1,23 +1,47 @@
 ---
-import { ModelBrowser } from "@/components/ModelBrowser";
-import { fetchLLMModels } from "@/lib/llm-model-service";
-import "@/styles/global.css";
+/* ルートページはリダイレクトのみを担当 */
+import { LOCALES, type Locale } from "@/lib/translations";
 
-const models = await fetchLLMModels();
-const buildDate = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+const localeMap = { en: "/en/", ja: "/ja/" } satisfies Record<Locale, string>;
 ---
 
-<html lang="ja">
+<div
+  data-locale-config={JSON.stringify({ validLocales: LOCALES, localeMap })}
+  hidden
+>
+</div>
+
+<script>
+  (function () {
+    const configElement = document.querySelector("[data-locale-config]");
+    if (!configElement) return;
+
+    const configJson = configElement.getAttribute("data-locale-config");
+    if (!configJson) return;
+
+    const config = JSON.parse(configJson);
+    const { validLocales, localeMap } = config;
+
+    const savedPreference = localStorage.getItem("i18n-preference");
+    if (savedPreference && validLocales.includes(savedPreference)) {
+      window.location.replace(localeMap[savedPreference]);
+      return;
+    }
+
+    const browserLang = navigator.language.toLowerCase().split("-")[0];
+    if (validLocales.includes(browserLang)) {
+      window.location.replace(localeMap[browserLang]);
+      return;
+    }
+
+    window.location.replace("/en/");
+  })();
+</script>
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LLM API Price Table</title>
-    <meta name="description" content="LLM API 価格比較テーブル" />
+    <meta http-equiv="refresh" content="1;url=/en/" />
   </head>
   <body>
-    <main class="container mx-auto py-10">
-      <h1 class="mb-6 text-3xl font-bold">LLM API Price Table</h1>
-      <ModelBrowser models={models} buildDate={buildDate} client:load />
-    </main>
+    <p>Redirecting to <a href="/en/">English version</a>...</p>
   </body>
 </html>

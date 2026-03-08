@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { t, tTableHeader, type Locale } from "@/lib/translations";
 import type { ModelData } from "@/lib/types";
 import {
   formatContextLength,
@@ -22,17 +24,23 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
 interface ComparisonSectionProps {
+  locale: Locale;
   models: ModelData[];
   selectedModelIds: string[];
+  isLoaded: boolean;
   onRemove?: (id: string) => void;
   onClearAll?: () => void;
+  showId?: boolean;
 }
 
 export function ComparisonSection({
+  locale,
   models,
   selectedModelIds,
+  isLoaded,
   onRemove,
   onClearAll,
+  showId = false,
 }: ComparisonSectionProps) {
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -77,14 +85,25 @@ export function ComparisonSection({
     onClearAll?.();
   };
 
+  if (!isLoaded) {
+    return (
+      <div className="bg-card w-full rounded-lg border p-6">
+        <h3 className="mb-4 text-lg font-semibold">
+          <Skeleton className="h-6 w-48" />
+        </h3>
+        <Skeleton className="mb-2 h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
+    );
+  }
+
   if (selectedModels.length === 0) {
     return (
       <div className="bg-card w-full rounded-lg border p-6">
-        <h3 className="mb-4 text-lg font-semibold">モデル比較</h3>
-        <p className="text-muted-foreground">選択されたモデルはありません</p>
-        <p className="text-muted-foreground text-sm">
-          モデル一覧からモデルを選択して比較してください
-        </p>
+        <h3 className="mb-4 text-lg font-semibold">
+          {t(locale, "comparisonTitle")}
+        </h3>
+        <p className="text-muted-foreground">{t(locale, "noModelsFound")}</p>
       </div>
     );
   }
@@ -92,13 +111,17 @@ export function ComparisonSection({
   return (
     <div className="bg-card w-full rounded-lg border">
       <div className="bg-card flex items-center justify-between border-b p-4">
-        <h3 className="text-lg font-semibold">モデル比較</h3>
+        <h3 className="text-lg font-semibold">
+          {t(locale, "comparisonTitle")}
+        </h3>
         <div className="flex items-center gap-4">
-          <p className="text-muted-foreground text-sm">価格：$/1M Token</p>
+          <p className="text-muted-foreground text-sm">
+            {t(locale, "priceLabel")}
+          </p>
           {selectedModels.length > 0 && (
             <Button variant="outline" size="sm" onClick={handleClearAll}>
               <Trash2 className="text-destructive mr-2 h-4 w-4" />
-              すべてクリア
+              {t(locale, "clearAll")}
             </Button>
           )}
         </div>
@@ -111,7 +134,7 @@ export function ComparisonSection({
               onClick={() => handleSort("name")}
             >
               <div className="flex items-center">
-                モデル名 {getSortIcon("name")}
+                {tTableHeader(locale, "modelName")} {getSortIcon("name")}
               </div>
             </TableHead>
             <TableHead
@@ -119,7 +142,8 @@ export function ComparisonSection({
               onClick={() => handleSort("contextLength")}
             >
               <div className="flex items-center">
-                コンテキスト長 {getSortIcon("contextLength")}
+                {tTableHeader(locale, "contextLength")}{" "}
+                {getSortIcon("contextLength")}
               </div>
             </TableHead>
             <TableHead
@@ -127,7 +151,7 @@ export function ComparisonSection({
               onClick={() => handleSort("createdAt")}
             >
               <div className="flex items-center">
-                作成日 {getSortIcon("createdAt")}
+                {tTableHeader(locale, "createdAt")} {getSortIcon("createdAt")}
               </div>
             </TableHead>
             <TableHead
@@ -135,7 +159,7 @@ export function ComparisonSection({
               onClick={() => handleSort("inputPrice")}
             >
               <div className="flex items-center">
-                Input {getSortIcon("inputPrice")}
+                {tTableHeader(locale, "input")} {getSortIcon("inputPrice")}
               </div>
             </TableHead>
             <TableHead
@@ -143,7 +167,7 @@ export function ComparisonSection({
               onClick={() => handleSort("outputPrice")}
             >
               <div className="flex items-center">
-                Output {getSortIcon("outputPrice")}
+                {tTableHeader(locale, "output")} {getSortIcon("outputPrice")}
               </div>
             </TableHead>
             <TableHead
@@ -151,7 +175,8 @@ export function ComparisonSection({
               onClick={() => handleSort("inputCacheReadPrice")}
             >
               <div className="flex items-center">
-                Input Cache Read {getSortIcon("inputCacheReadPrice")}
+                {tTableHeader(locale, "inputCacheRead")}{" "}
+                {getSortIcon("inputCacheReadPrice")}
               </div>
             </TableHead>
             <TableHead
@@ -159,7 +184,8 @@ export function ComparisonSection({
               onClick={() => handleSort("inputCacheWritePrice")}
             >
               <div className="flex items-center">
-                Input Cache Write {getSortIcon("inputCacheWritePrice")}
+                {tTableHeader(locale, "inputCacheWrite")}{" "}
+                {getSortIcon("inputCacheWritePrice")}
               </div>
             </TableHead>
             <TableHead
@@ -167,7 +193,8 @@ export function ComparisonSection({
               onClick={() => handleSort("inputModalities")}
             >
               <div className="flex items-center">
-                入力モダリティ {getSortIcon("inputModalities")}
+                {tTableHeader(locale, "inputModalities")}{" "}
+                {getSortIcon("inputModalities")}
               </div>
             </TableHead>
             <TableHead
@@ -175,7 +202,8 @@ export function ComparisonSection({
               onClick={() => handleSort("outputModalities")}
             >
               <div className="flex items-center">
-                出力モダリティ {getSortIcon("outputModalities")}
+                {tTableHeader(locale, "outputModalities")}{" "}
+                {getSortIcon("outputModalities")}
               </div>
             </TableHead>
           </TableRow>
@@ -185,13 +213,13 @@ export function ComparisonSection({
             <TableRow key={model.id}>
               <TableCell className="font-medium">
                 <div className="flex items-center justify-between">
-                  <span>{model.name}</span>
+                  <span>{showId ? model.id : model.name}</span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleRemove(model.id)}
-                    className="text-destructive hover:text-destructive"
-                    aria-label={`${model.name} を削除`}
+                    className="text-destructive hover:text-destructive ml-auto h-auto p-0"
+                    aria-label={`${t(locale, "deleteModel")}: ${showId ? model.id : model.name}`}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -219,6 +247,20 @@ export function ComparisonSection({
               <TableCell>{formatModalities(model.outputModalities)}</TableCell>
             </TableRow>
           ))}
+          {selectedModels.length === 0 && isLoaded && (
+            <>
+              {[...Array(3)].map((_, i) => (
+                <TableRow key={`skeleton-${i}`}>
+                  <TableCell colSpan={10} className="h-24">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-1/4" />
+                      <Skeleton className="h-4 w-1/4" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </>
+          )}
         </TableBody>
       </Table>
     </div>

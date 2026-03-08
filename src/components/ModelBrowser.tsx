@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -10,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { t, tTableHeader, type Locale } from "@/lib/translations";
 import type { ModelData } from "@/lib/types";
 import { useModelSelection } from "@/lib/use-model-selection";
 import { sortModels, type SortColumn, type SortDirection } from "@/lib/utils";
@@ -25,19 +27,33 @@ import {
 import { useMemo, useState } from "react";
 import { ComparisonSection } from "./ComparisonSection";
 
+const isNew = (
+  createdAt: number | null | undefined,
+  buildDate: string,
+): boolean => {
+  if (!createdAt) return false;
+  const created = new Date(createdAt * 1000);
+  const build = new Date(buildDate);
+  const diffInDays = Math.floor(
+    (build.getTime() - created.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  return diffInDays <= 30;
+};
+
 interface ModelBrowserProps {
+  locale: Locale;
   models: ModelData[];
   buildDate: string;
 }
 
-export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
+export function ModelBrowser({ locale, models, buildDate }: ModelBrowserProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [showId, setShowId] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-  const { selectedModelIds, addModel, removeModel, clearAll } =
+  const { selectedModelIds, isLoaded, addModel, removeModel, clearAll } =
     useModelSelection();
 
   const filteredAndSortedModels = useMemo(() => {
@@ -116,29 +132,36 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
   return (
     <div className="w-full space-y-6">
       <ComparisonSection
+        locale={locale}
         models={models}
         selectedModelIds={selectedModelIds}
+        isLoaded={isLoaded}
         onRemove={removeModel}
         onClearAll={clearAll}
+        showId={showId}
       />
 
       <div>
         <div className="mb-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold">モデル一覧</h2>
+            <h2 className="text-lg font-semibold">{t(locale, "modelList")}</h2>
             <Badge variant="secondary">
-              {filteredAndSortedModels.length} 個のモデル
+              {filteredAndSortedModels.length} {t(locale, "modelsCount")}
             </Badge>
-            <Badge variant="outline">最終更新：{buildDate}</Badge>
+            <Badge variant="outline">
+              {t(locale, "lastUpdated")}: {buildDate}
+            </Badge>
           </div>
-          <p className="text-muted-foreground text-sm">価格：$/1M Token</p>
+          <p className="text-muted-foreground text-sm">
+            {t(locale, "priceLabel")}
+          </p>
         </div>
         <div className="mb-4">
           <div className="relative">
             <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="モデル名で検索"
+              placeholder={t(locale, "searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border py-2 pr-3 pl-10 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
@@ -155,7 +178,7 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span>モデル名</span>
+                    <span>{tTableHeader(locale, "modelName")}</span>
                     {getSortIcon("name")}
                   </div>
                   <div
@@ -163,7 +186,7 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <span className="text-muted-foreground text-xs">
-                      ID 表示
+                      {t(locale, "showId")}
                     </span>
                     <Checkbox
                       id="showId"
@@ -171,7 +194,7 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                       onCheckedChange={(checked: unknown) =>
                         setShowId(checked as boolean)
                       }
-                      aria-label="ID 表示"
+                      aria-label={t(locale, "showId")}
                     />
                   </div>
                 </div>
@@ -181,7 +204,8 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("contextLength")}
               >
                 <div className="flex items-center">
-                  コンテキスト長 {getSortIcon("contextLength")}
+                  {tTableHeader(locale, "contextLength")}{" "}
+                  {getSortIcon("contextLength")}
                 </div>
               </TableHead>
               <TableHead
@@ -189,7 +213,7 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("createdAt")}
               >
                 <div className="flex items-center">
-                  作成日 {getSortIcon("createdAt")}
+                  {tTableHeader(locale, "createdAt")} {getSortIcon("createdAt")}
                 </div>
               </TableHead>
               <TableHead
@@ -197,7 +221,7 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("inputPrice")}
               >
                 <div className="flex items-center">
-                  Input {getSortIcon("inputPrice")}
+                  {tTableHeader(locale, "input")} {getSortIcon("inputPrice")}
                 </div>
               </TableHead>
               <TableHead
@@ -205,7 +229,7 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("outputPrice")}
               >
                 <div className="flex items-center">
-                  Output {getSortIcon("outputPrice")}
+                  {tTableHeader(locale, "output")} {getSortIcon("outputPrice")}
                 </div>
               </TableHead>
               <TableHead
@@ -213,7 +237,8 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("inputCacheReadPrice")}
               >
                 <div className="flex items-center">
-                  Input Cache Read {getSortIcon("inputCacheReadPrice")}
+                  {tTableHeader(locale, "inputCacheRead")}{" "}
+                  {getSortIcon("inputCacheReadPrice")}
                 </div>
               </TableHead>
               <TableHead
@@ -221,7 +246,8 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("inputCacheWritePrice")}
               >
                 <div className="flex items-center">
-                  Input Cache Write {getSortIcon("inputCacheWritePrice")}
+                  {tTableHeader(locale, "inputCacheWrite")}{" "}
+                  {getSortIcon("inputCacheWritePrice")}
                 </div>
               </TableHead>
               <TableHead
@@ -229,7 +255,8 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("inputModalities")}
               >
                 <div className="flex items-center">
-                  入力モダリティ {getSortIcon("inputModalities")}
+                  {tTableHeader(locale, "inputModalities")}{" "}
+                  {getSortIcon("inputModalities")}
                 </div>
               </TableHead>
               <TableHead
@@ -237,7 +264,8 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                 onClick={() => handleSort("outputModalities")}
               >
                 <div className="flex items-center">
-                  出力モダリティ {getSortIcon("outputModalities")}
+                  {tTableHeader(locale, "outputModalities")}{" "}
+                  {getSortIcon("outputModalities")}
                 </div>
               </TableHead>
             </TableRow>
@@ -249,7 +277,7 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                   colSpan={10}
                   className="text-muted-foreground h-24 text-center"
                 >
-                  モデルが見つかりません
+                  {t(locale, "noModelsFound")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -264,7 +292,9 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                             handleCopy(showId ? model.id : model.name, index)
                           }
                           className="text-muted-foreground hover:text-foreground transition-colors"
-                          title={showId ? "ID をコピー" : "モデル名をコピー"}
+                          title={
+                            showId ? t(locale, "copyId") : t(locale, "copyName")
+                          }
                         >
                           {copiedIndex === index ? (
                             <Check className="h-4 w-4" />
@@ -273,28 +303,36 @@ export function ModelBrowser({ models, buildDate }: ModelBrowserProps) {
                           )}
                         </button>
                       </div>
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handleAddModel(model.id)}
-                        className={`ml-auto transition-colors ${
+                        className={`ml-auto h-auto p-0 ${
                           selectedModelIds.includes(model.id)
-                            ? "text-green-600"
+                            ? "text-green-600 hover:text-green-600"
                             : "text-muted-foreground hover:text-foreground"
                         }`}
                         title={
                           selectedModelIds.includes(model.id)
-                            ? "選択済み"
-                            : "比較に追加"
+                            ? t(locale, "selected")
+                            : t(locale, "addToComparison")
                         }
-                        aria-label="比較に追加"
+                        aria-label={t(locale, "addToComparison")}
                       >
                         <Plus className="h-4 w-4" />
-                      </button>
+                      </Button>
                     </div>
                   </TableCell>
                   <TableCell>
                     {formatContextLength(model.contextLength)}
                   </TableCell>
-                  <TableCell>
+                  <TableCell
+                    className={
+                      isNew(model.createdAt, buildDate)
+                        ? "text-primary underline decoration-2"
+                        : ""
+                    }
+                  >
                     {model.createdAt
                       ? new Date(model.createdAt * 1000)
                           .toISOString()

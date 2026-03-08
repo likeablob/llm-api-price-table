@@ -1,0 +1,22 @@
+---
+import type { Locale } from "@/lib/translations";
+import { isValidLocale } from "@/lib/utils";
+import { LanguageSelectorReact } from "./LanguageSelector";
+
+const currentLocale = isValidLocale(Astro.currentLocale)
+  ? (Astro.currentLocale as Locale)
+  : ("en" satisfies Locale);
+---
+
+<div class="language-selector">
+  <LanguageSelectorReact currentLocale={currentLocale} client:load />
+</div>
+
+<style>
+  .language-selector {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+  }
+</style>

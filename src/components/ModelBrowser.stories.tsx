@@ -69,31 +69,34 @@ const mockModels: ModelData[] = [
 
 export const Default: Story = {
   args: {
+    locale: "en",
     models: mockModels,
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+    buildDate: "2024-03-08T00:00:00Z",
   },
 };
 
 export const EmptyState: Story = {
   args: {
+    locale: "en",
     models: [],
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+    buildDate: "2024-03-08T00:00:00Z",
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const emptyMessage = canvas.getByText("モデルが見つかりません");
-    expect(emptyMessage).toBeInTheDocument();
+    const emptyMessages = canvas.getAllByText(/No models selected/i);
+    await expect(emptyMessages[0]).toBeInTheDocument();
   },
 };
 
 export const WithSearch: Story = {
   args: {
+    locale: "en",
     models: mockModels,
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
-    const searchInput = canvas.getByPlaceholderText("モデル名で検索");
+    const searchInput = canvas.getByPlaceholderText("Search by model name");
     await userEvent.type(searchInput, "Claude");
     const modelCells = canvas.getAllByRole("cell", {
       name: "Anthropic: Claude 3.5 Sonnet",
@@ -104,14 +107,15 @@ export const WithSearch: Story = {
 
 export const WithSearchById: Story = {
   args: {
+    locale: "en",
     models: mockModels,
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
-    const checkbox = canvas.getByRole("checkbox", { name: /ID 表示/ });
+    const checkbox = canvas.getByRole("checkbox", { name: /Show ID/ });
     await userEvent.click(checkbox);
-    const searchInput = canvas.getByPlaceholderText("モデル名で検索");
+    const searchInput = canvas.getByPlaceholderText("Search by model name");
     await userEvent.type(searchInput, "google/gemini");
     const modelCells = canvas.getAllByRole("cell", {
       name: "google/gemini-2.0-flash",
@@ -122,12 +126,13 @@ export const WithSearchById: Story = {
 
 export const WithIdCheckbox: Story = {
   args: {
+    locale: "en",
     models: mockModels,
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const checkbox = canvas.getByRole("checkbox", { name: /ID 表示/ });
+    const checkbox = canvas.getByRole("checkbox", { name: /Show ID/ });
     await userEvent.click(checkbox);
     const idCells = canvas.getAllByRole("cell", {
       name: /openai\/gpt-5.4-pro|anthropic\/claude-3-5-sonnet|google\/gemini-2.0-flash/,
@@ -138,23 +143,27 @@ export const WithIdCheckbox: Story = {
 
 export const ToggleAddRemove: Story = {
   args: {
+    locale: "en",
     models: mockModels,
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
-    const plusButtons = canvas.getAllByRole("button", { name: /比較に追加/ });
+    const plusButtons = canvas.getAllByRole("button", {
+      name: /Add to comparison/,
+    });
     await userEvent.click(plusButtons[0]);
-    const comparisonSection = canvas.getByText(/モデル比較/);
+    const comparisonSection = canvas.getByText(/Comparison/);
     expect(comparisonSection).toBeInTheDocument();
     await userEvent.click(plusButtons[0]);
-    const emptyMessage = canvas.getByText(/選択されたモデルはありません/i);
+    const emptyMessage = canvas.getByText(/No models selected/i);
     expect(emptyMessage).toBeInTheDocument();
   },
 };
 
 export const SortInputCacheReadPrice: Story = {
   args: {
+    locale: "en",
     models: mockModels,
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
@@ -175,6 +184,7 @@ export const SortInputCacheReadPrice: Story = {
 
 export const SortInputCacheWritePrice: Story = {
   args: {
+    locale: "en",
     models: mockModels,
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
@@ -195,13 +205,14 @@ export const SortInputCacheWritePrice: Story = {
 
 export const SortInputModalities: Story = {
   args: {
+    locale: "en",
     models: mockModels,
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const sortHeader = canvas.getByRole("columnheader", {
-      name: /入力モダリティ/,
+      name: /Input Modalities/,
     });
     await userEvent.click(sortHeader);
     const firstRow = canvas.getAllByRole("row")[1];
@@ -212,13 +223,14 @@ export const SortInputModalities: Story = {
 
 export const SortOutputModalities: Story = {
   args: {
+    locale: "en",
     models: mockModels,
     buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const sortHeader = canvas.getByRole("columnheader", {
-      name: /出力モダリティ/,
+      name: /Output Modalities/,
     });
     await userEvent.click(sortHeader);
     const firstRow = canvas.getAllByRole("row")[1];
