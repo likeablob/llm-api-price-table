@@ -57,10 +57,10 @@ export const EmptyState: Story = {
     const canvas = within(canvasElement);
     const emptyMessage = canvas.getByText(/No models selected/i);
     expect(emptyMessage).toBeInTheDocument();
-    const clearAllButton = canvas.queryByRole("button", {
+    const clearAllButton = canvas.getByRole("button", {
       name: /Clear All/i,
     });
-    expect(clearAllButton).not.toBeInTheDocument();
+    expect(clearAllButton).toBeDisabled();
   },
 };
 

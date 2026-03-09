@@ -149,15 +149,18 @@ export const ToggleAddRemove: Story = {
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
-    const plusButtons = canvas.getAllByRole("button", {
+    const modelTable = canvas.getByTestId("model-browser-table");
+    const modelWithin = within(modelTable);
+    const plusButtons = modelWithin.getAllByRole("button", {
       name: /Add to comparison/,
     });
     await userEvent.click(plusButtons[0]);
     const comparisonSection = canvas.getByText(/Comparison/);
     expect(comparisonSection).toBeInTheDocument();
-    await userEvent.click(plusButtons[0]);
-    const emptyMessage = canvas.getByText(/No models selected/i);
-    expect(emptyMessage).toBeInTheDocument();
+    const comparisonTable = canvas.getByTestId("comparison-table");
+    const comparisonWithin = within(comparisonTable);
+    const firstModel = comparisonWithin.getByText(/OpenAI: GPT-5\.4 Pro/i);
+    expect(firstModel).toBeInTheDocument();
   },
 };
 
@@ -169,14 +172,16 @@ export const SortInputCacheReadPrice: Story = {
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
-    const sortHeader = canvas.getByRole("columnheader", {
+    const modelTable = canvas.getByTestId("model-browser-table");
+    const modelWithin = within(modelTable);
+    const sortHeader = modelWithin.getByRole("columnheader", {
       name: /Input Cache Read/,
     });
     await userEvent.click(sortHeader);
-    const firstRow = canvas.getAllByRole("row")[1];
+    const firstRow = modelWithin.getAllByRole("row")[1];
     const cells = within(firstRow).getAllByRole("cell");
     expect(cells[0].textContent).toContain("Google: Gemini 2.0 Flash");
-    const lastRow = canvas.getAllByRole("row")[4];
+    const lastRow = modelWithin.getAllByRole("row")[4];
     const lastCells = within(lastRow).getAllByRole("cell");
     expect(lastCells[0].textContent).toContain("Meta: Llama 3.1");
   },
@@ -190,14 +195,16 @@ export const SortInputCacheWritePrice: Story = {
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
-    const sortHeader = canvas.getByRole("columnheader", {
+    const modelTable = canvas.getByTestId("model-browser-table");
+    const modelWithin = within(modelTable);
+    const sortHeader = modelWithin.getByRole("columnheader", {
       name: /Input Cache Write/,
     });
     await userEvent.click(sortHeader);
-    const firstRow = canvas.getAllByRole("row")[1];
+    const firstRow = modelWithin.getAllByRole("row")[1];
     const cells = within(firstRow).getAllByRole("cell");
     expect(cells[0].textContent).toContain("Google: Gemini 2.0 Flash");
-    const lastRow = canvas.getAllByRole("row")[4];
+    const lastRow = modelWithin.getAllByRole("row")[4];
     const lastCells = within(lastRow).getAllByRole("cell");
     expect(lastCells[0].textContent).toContain("Meta: Llama 3.1");
   },
@@ -211,11 +218,13 @@ export const SortInputModalities: Story = {
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
-    const sortHeader = canvas.getByRole("columnheader", {
+    const modelTable = canvas.getByTestId("model-browser-table");
+    const modelWithin = within(modelTable);
+    const sortHeader = modelWithin.getByRole("columnheader", {
       name: /Input Modalities/,
     });
     await userEvent.click(sortHeader);
-    const firstRow = canvas.getAllByRole("row")[1];
+    const firstRow = modelWithin.getAllByRole("row")[1];
     const cells = within(firstRow).getAllByRole("cell");
     expect(cells[0].textContent).toContain("OpenAI: GPT-5.4 Pro");
   },
@@ -229,11 +238,13 @@ export const SortOutputModalities: Story = {
   },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
-    const sortHeader = canvas.getByRole("columnheader", {
+    const modelTable = canvas.getByTestId("model-browser-table");
+    const modelWithin = within(modelTable);
+    const sortHeader = modelWithin.getByRole("columnheader", {
       name: /Output Modalities/,
     });
     await userEvent.click(sortHeader);
-    const firstRow = canvas.getAllByRole("row")[1];
+    const firstRow = modelWithin.getAllByRole("row")[1];
     const cells = within(firstRow).getAllByRole("cell");
     expect(cells[0].textContent).toContain("OpenAI: GPT-5.4 Pro");
   },

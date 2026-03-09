@@ -1,5 +1,5 @@
 import { expect, type BrowserContext, type Page } from "@playwright/test";
-import { localeLabels, type Locale } from "../../../src/lib/translations";
+import { type Locale } from "../../../src/lib/translations";
 
 export class IndexPage {
   public page: Page;
@@ -13,12 +13,7 @@ export class IndexPage {
   async goto(locale: Locale = "en" satisfies Locale): Promise<void> {
     await this.page.goto(`/${locale}/`);
     await this.page.waitForLoadState("networkidle");
-    await this.page.waitForFunction(
-      () => {
-        return document.querySelector("table") !== null;
-      },
-      { timeout: 30000 },
-    );
+    await this.page.waitForSelector("table", { timeout: 30000 });
   }
 
   async expectToHaveURL(expectedUrl: string): Promise<void> {
@@ -40,11 +35,15 @@ export class IndexPage {
   }
 
   get table() {
-    return this.page.locator("table");
+    return this.page.getByTestId("model-browser-table");
   }
 
   get modelRows() {
-    return this.page.locator("tbody tr");
+    return this.page
+      .getByTestId("model-browser-table")
+      .locator(
+        "tbody tr:not(:has(:text('モデルが見つかりません'))):not(:has(:text('No models found')))",
+      );
   }
 
   getModelByName(name: string) {
@@ -52,15 +51,16 @@ export class IndexPage {
   }
 
   getSortIconByPattern(pattern: RegExp) {
-    return this.page.locator("th").filter({
+    return this.table.locator("th").filter({
       hasText: pattern,
     });
   }
 
   get comparisonSection() {
-    return this.page.locator("div.bg-card").filter({
-      hasText: /モデル比較 |Comparison/,
-    });
+    return this.page
+      .getByTestId("comparison-table")
+      .locator("..")
+      .locator("..");
   }
 
   get clearAllButton() {
@@ -80,11 +80,16 @@ export class IndexPage {
   }
 
   get comparisonRows() {
-    return this.comparisonSection.locator("tbody tr");
+    return this.page
+      .getByTestId("comparison-table")
+      .locator(
+        "tbody tr:not(:has(:text('モデルが選択されていません'))):not(:has(:text('No models selected'))):not(:has(:text('モデルが見つかりません'))):not(:has(:text('No models found')))",
+      );
   }
 
   getPlusIcon(modelName: string) {
     return this.page
+      .getByTestId("model-browser-table")
       .locator("tbody tr")
       .filter({ hasText: modelName })
       .getByRole("button", {
@@ -94,7 +99,8 @@ export class IndexPage {
   }
 
   getDeleteButton(modelName: string) {
-    return this.comparisonSection
+    return this.page
+      .getByTestId("comparison-table")
       .locator("tbody tr")
       .filter({ hasText: modelName })
       .getByRole("button", { name: /削除|Delete/ })
@@ -106,10 +112,12 @@ export class IndexPage {
   }
 
   async clickLanguage(locale: Locale): Promise<void> {
-    await this.languageSelector.click();
-    const label = localeLabels[locale];
-    const option = this.page.getByRole("option", { name: label });
-    await option.waitFor({ state: "visible" });
+    const option = this.page.getByTestId(`language-option-${locale}`);
+    const isVisible = await option.isVisible();
+    if (!isVisible) {
+      await this.languageSelector.click();
+      await this.page.waitForTimeout(200);
+    }
     await option.click();
   }
 

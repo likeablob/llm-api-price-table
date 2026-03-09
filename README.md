@@ -1,4 +1,4 @@
-# LLM API Price Table
+# [LLM API Price Table](https://likeablob.github.io/llm-api-price-table)
 
 Yet yet another LLM API pricing comparison tool built with Astro 5 and React 19.
 
