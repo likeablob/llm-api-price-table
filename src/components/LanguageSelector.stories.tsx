@@ -22,11 +22,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    currentLocale: "en",
-  },
-};
+export const Default: Story = {};
 
 export const WithJapanese: Story = {
   args: {
@@ -40,8 +36,4 @@ export const WithChinese: Story = {
   },
 };
 
-export const WithAllLocales: Story = {
-  args: {
-    currentLocale: "en",
-  },
-};
+export const WithAllLocales: Story = {};

@@ -3,17 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, within } from "storybook/test";
 import { ModelBrowser } from "./ModelBrowser";
 
-const meta = {
-  title: "Components/ModelBrowser",
-  component: ModelBrowser,
-  parameters: {
-    layout: "fullscreen",
-  },
-} satisfies Meta<typeof ModelBrowser>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 const mockModels: ModelData[] = [
   {
     id: "openai/gpt-5.4-pro",
@@ -67,19 +56,27 @@ const mockModels: ModelData[] = [
   },
 ];
 
-export const Default: Story = {
+const meta = {
+  title: "Components/ModelBrowser",
+  component: ModelBrowser,
+  parameters: {
+    layout: "fullscreen",
+  },
   args: {
     locale: "en",
     models: mockModels,
     buildDate: "2024-03-08T00:00:00Z",
   },
-};
+} satisfies Meta<typeof ModelBrowser>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
 
 export const EmptyState: Story = {
   args: {
-    locale: "en",
     models: [],
-    buildDate: "2024-03-08T00:00:00Z",
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -89,11 +86,6 @@ export const EmptyState: Story = {
 };
 
 export const WithSearch: Story = {
-  args: {
-    locale: "en",
-    models: mockModels,
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-  },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const searchInput = canvas.getByPlaceholderText("Search by model name");
@@ -106,11 +98,6 @@ export const WithSearch: Story = {
 };
 
 export const WithSearchById: Story = {
-  args: {
-    locale: "en",
-    models: mockModels,
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-  },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const checkbox = canvas.getByRole("checkbox", { name: /Show ID/ });
@@ -125,11 +112,6 @@ export const WithSearchById: Story = {
 };
 
 export const WithIdCheckbox: Story = {
-  args: {
-    locale: "en",
-    models: mockModels,
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const checkbox = canvas.getByRole("checkbox", { name: /Show ID/ });
@@ -142,11 +124,6 @@ export const WithIdCheckbox: Story = {
 };
 
 export const ToggleAddRemove: Story = {
-  args: {
-    locale: "en",
-    models: mockModels,
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-  },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const modelTable = canvas.getByTestId("model-browser-table");
@@ -165,11 +142,6 @@ export const ToggleAddRemove: Story = {
 };
 
 export const SortInputCacheReadPrice: Story = {
-  args: {
-    locale: "en",
-    models: mockModels,
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-  },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const modelTable = canvas.getByTestId("model-browser-table");
@@ -188,11 +160,6 @@ export const SortInputCacheReadPrice: Story = {
 };
 
 export const SortInputCacheWritePrice: Story = {
-  args: {
-    locale: "en",
-    models: mockModels,
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-  },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const modelTable = canvas.getByTestId("model-browser-table");
@@ -211,11 +178,6 @@ export const SortInputCacheWritePrice: Story = {
 };
 
 export const SortInputModalities: Story = {
-  args: {
-    locale: "en",
-    models: mockModels,
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-  },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const modelTable = canvas.getByTestId("model-browser-table");
@@ -231,11 +193,6 @@ export const SortInputModalities: Story = {
 };
 
 export const SortOutputModalities: Story = {
-  args: {
-    locale: "en",
-    models: mockModels,
-    buildDate: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-  },
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const modelTable = canvas.getByTestId("model-browser-table");
