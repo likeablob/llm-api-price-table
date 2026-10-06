@@ -2,7 +2,7 @@
 import eslint from "@eslint/js";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
-import astroParser from "astro-eslint-parser";
+import * as astroParser from "astro-eslint-parser";
 import astroPlugin from "eslint-plugin-astro";
 import storybook from "eslint-plugin-storybook";
 import globals from "globals";
