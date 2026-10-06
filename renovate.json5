@@ -1,0 +1,26 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+
+  // Stable commit author so Renovate recognizes its own commits and can auto-rebase
+  "gitAuthor": "Renovate <renovate@users.noreply.github.com>",
+
+  // Disable Renovate's own time window since cron triggers every Wednesday 0:00 UTC
+  "schedule": ["at any time"],
+
+  // Periodic maintenance of package-lock.json (lockfile-only update PRs)
+  "lockFileMaintenance": { "enabled": true },
+
+  // Also update GitHub Actions `uses:` references
+  "enabledManagers": ["npm", "github-actions"],
+
+  "rangeStrategy": "bump",
+
+  // Limit the number of PRs opened at once
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 5,
+
+  "labels": ["dependencies"],
+
+  "automerge": false
+}
